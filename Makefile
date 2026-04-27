@@ -1,7 +1,7 @@
-NAME = ircserv
-NAME_BNS = ircserv_bonus
+NAME = Nibbler
+NAME_BNS = Nibbler_bonus
 
-CPPFLAGS = -Wall -Wextra -Werror -std=c++98 -g
+CPPFLAGS = -Wall -Wextra -Werror -g
 CXX = c++
 RM = rm -f
 
@@ -11,8 +11,11 @@ BNS_DIR = Bonus
 OBJDIR = Obj
 OBJ_BNSDIR = ObjBns
 
-FILES = main.cpp
-FILES_BNS = main_bns.cpp
+FILES = nibbler.cpp \
+		Game.cpp \
+		Snake.cpp
+
+FILES_BNS = nibbler_bns.cpp
 
 SRC = $(addprefix $(SRC_DIR)/, $(FILES))
 SRC_BNS = $(addprefix $(BNS_DIR)/, $(FILES_BNS))

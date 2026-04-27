@@ -1,18 +1,41 @@
 #pragma once
 
-#include "Nibbler.hpp"
+#include <cstdlib>
+#include <iostream>
+#include <vector>
+#include <unistd.h>
+
+#include "Types.hpp"
+
+enum Direction {
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT
+};
+
+struct Position {
+	int x;
+	int y;
+};
 
 class Snake
 {
 	private:
+		Direction _direction;
+		std::vector<Position> _body; // Liste de l'ensemble du corps + tête
 	public:
 		Snake();
+		Snake(int startX, int startY);
 		Snake(const Snake &copy);
 		Snake &operator=(const Snake &src);
 		~Snake();
 
-		int taille;
-		float vitesse;
-		std::vector<int> pos;
-		enum dir;
-}
+		void move(const std::vector<std::vector<Tile> > &map);
+
+		// Setter
+		void setDirection(Direction dir);
+
+		// Getter
+		const std::vector<Position> &getBody() const;
+};
