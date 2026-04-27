@@ -11,7 +11,7 @@ BNS_DIR = Bonus
 OBJDIR = Obj
 OBJ_BNSDIR = ObjBns
 
-FILES = nibbler.cpp \
+FILES = Nibbler.cpp \
 		Game.cpp \
 		Snake.cpp
 
@@ -53,3 +53,11 @@ clean:
 	@$(RM) $(OBJ)
 	@$(RM) $(OBJ_BNS)
 	@rm -rf $(OBJDIR)
+
+fclean: clean
+	$(RM) $(NAME)
+	$(RM) $(NAME_BNS)
+
+re: fclean all
+
+.PHONY: all bonus intro clean fclean re
