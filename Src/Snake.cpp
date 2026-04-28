@@ -4,7 +4,7 @@ Snake::Snake() {} // Constructeur par défaut
 
 Snake::Snake(int startX, int startY) // Constructeur (taille 4 vers droite)
 {
-    std::cout << "Création du Snake..." << std::endl;
+    //std::cout << "Création du Snake..." << std::endl;
 
     _direction = RIGHT;
     for (int i = 0; i < 4; i++) // Ajoute 4 tile au snake pour démarrer
@@ -15,7 +15,7 @@ Snake::Snake(int startX, int startY) // Constructeur (taille 4 vers droite)
         _body.push_back(p);
     }
 
-    std::cout << "Snake créé" << std::endl;
+    //std::cout << "Snake créé" << std::endl;
 }
 
 Snake::Snake(const Snake &copy)
@@ -34,7 +34,7 @@ Snake &Snake::operator=(const Snake &src)
 
 Snake::~Snake() {}
 
-void Snake::move(const std::vector<std::vector<Tile> > &map) // Avance la tête de 1 dans la direction
+State Snake::move(const std::vector<std::vector<Tile> > &map) // Avance la tête de 1 dans la direction
 {
     Position head = _body.front();
 
@@ -60,32 +60,42 @@ void Snake::move(const std::vector<std::vector<Tile> > &map) // Avance la tête 
     {
         case WALL:
             std::cout << "GAME OVER" << std::endl;
-            exit(1);
+            return DEAD;
             break;
         case EMPTY:
             _body.insert(_body.begin(), head);
             _body.pop_back();
+			return ALIVE;
             break;
         case SNAKE:
             std::cout << "GAME OVER" << std::endl;
-            exit(1);
+            return DEAD;
             break;
         case FOOD:
             //std::cout << "Nôm nôm nôm..." << std::endl;
             _body.insert(_body.begin(), head);
+			return EAT;
 
             // rappeler placeFood()
 
             break;
         default:
             std::cout << "PTDR chuis où ???" << std::endl;
+			return ALIVE;
             break;
     }
 }
 
 void Snake::setDirection(Direction dir)
 {
-    _direction = dir;
+	if ((dir == UP) & (_direction != DOWN))
+    	_direction = dir;
+	if ((dir == DOWN) & (_direction != UP))
+    	_direction = dir;
+	if ((dir == RIGHT) & (_direction != LEFT))
+    	_direction = dir;
+	if ((dir == LEFT) & (_direction != RIGHT))
+    	_direction = dir;
 }
 
 const std::vector<Position> &Snake::getBody() const

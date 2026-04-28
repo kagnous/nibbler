@@ -1,9 +1,11 @@
 #pragma once
 
+#include "IDisplay.hpp"
 #include <iostream>
 #include <cstdlib>
 #include <vector>
 #include <unistd.h>
+#include <dlfcn.h>
 
 #include "Types.hpp"
 
@@ -25,12 +27,13 @@ class Game
         Game &operator=(const Game &src);
         ~Game();
 
-        void run();
+        void run(IDisplay *display);
 
     private:
         int _width;
         int _height;
         int _frame;
+		bool _running;
         std::vector<std::vector<Tile> > _map;
         Snake _snake;
 
@@ -38,5 +41,6 @@ class Game
         void placeFood();
         void placeSnake();
         void update();
-        void render();  // A REMPLACER PAR LIBRAIRIE DYNAMIQUES
+		void handleInput(int input);
+        // void render();  // A REMPLACER PAR LIBRAIRIE DYNAMIQUES
 };

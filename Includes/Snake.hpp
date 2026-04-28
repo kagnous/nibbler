@@ -31,7 +31,7 @@ class Snake
 		Snake &operator=(const Snake &src);
 		~Snake();
 
-		void move(const std::vector<std::vector<Tile> > &map);
+		State move(const std::vector<std::vector<Tile> > &map);
 
 		// Setter
 		void setDirection(Direction dir);

@@ -6,8 +6,11 @@ Game::Game(int width, int height) : _snake(width / 2, height / 2) // Constructeu
 {
     _width = width;
     _height = height;
+	_running = true;
     _frame = 0;
     initMap();
+
+	placeSnake();
     placeFood(); // <= Vérifier que le 1er spawn pas sur le Snake
 }
 
@@ -43,8 +46,8 @@ void Game::initMap() // Remplit la map de EMPTY avec des WALL sur les extrémit�
 
 void Game::placeFood() // Place un FOOD sur un EMPTY aléatoire (boucle jusqu'à réussir)
 {
-    _map[7][5] = FOOD;
-    /*while(1)
+    //_map[7][5] = FOOD;
+    while(1)
     {
         int x = rand() % _width;
         int y = rand() % _height;
@@ -54,7 +57,8 @@ void Game::placeFood() // Place un FOOD sur un EMPTY aléatoire (boucle jusqu'à
             _map[y][x] = FOOD;
             break;
         }
-    }*/
+    }
+	// std::cout << "Food placed" << std::endl;
 }
 
 void Game::placeSnake() // Met à jour SNAKE dans la map
@@ -81,63 +85,70 @@ void Game::placeSnake() // Met à jour SNAKE dans la map
             _map[y][x] = SNAKE;
     }
 }
-
-void Game::update()
+//Gestions du comportement des inputs
+void Game::handleInput(int input)
 {
-    _snake.move(_map);
-    //std::cout << "Snake moved" << std::endl;
-    placeSnake();
-    //std::cout << "Snake placed" << std::endl;
-}
-
-void Game::render()  // affichage map A REMPLACER PAR LIBRAIRIE DYNAMIQUES
-{
-    for (int y = 0; y < _height; y++)
+    switch (input)
     {
-        for (int x = 0; x < _width; x++)
-        {
-            switch (_map[y][x])
-            {
-                case WALL: std::cout << "#"; break;
-                case SNAKE: std::cout << "O"; break;
-                case FOOD: std::cout << "*"; break;
-                default: std::cout << " "; break;
-            }
-        }
-        std::cout << std::endl;
+        case INPUT_UP:
+            _snake.setDirection(UP);
+            break;
+        case INPUT_DOWN:
+            _snake.setDirection(DOWN);
+            break;
+        case INPUT_LEFT:
+            _snake.setDirection(LEFT);
+            break;
+        case INPUT_RIGHT:
+            _snake.setDirection(RIGHT);
+            break;
+        case INPUT_QUIT:
+            _running = false;
+        default:
+            break;
     }
 }
 
-void Game::run() // fait tourner le jeu
+void Game::update()
 {
-    while (true)
-    {
-        system("clear"); // simple pour début
+    State state = _snake.move(_map);
+	placeSnake();
+	switch(state)
+	{
+		case DEAD:
+			_running = false;
+			break;
+		case EAT:
+			placeFood();
+			break;
+		default:
+			break;
+	}
+    //std::cout << "Snake moved" << std::endl;
+    //std::cout << "Snake placed" << std::endl;
+}
 
+void Game::run(IDisplay *display) // fait tourner le jeu
+{
+    if (!display)
+        return;
+
+    display->init(_width, _height);
+
+    while (_running)
+    {
+
+		
+		int input = display->getInput();
+		
+		handleInput(input);
+		
         update();
-        //std::cout << "Updated" << std::endl;
-        render();
-        _frame++;
-        switch(_frame)
-        {
-            case 2:
-               _snake.setDirection(UP);
-               break;
-            case 5:
-                _snake.setDirection(LEFT);
-                break;
-            case 10:
-                _snake.setDirection(DOWN);
-                break;
-            case 11:
-                _snake.setDirection(RIGHT);
-                break;
-            case 12:
-                _snake.setDirection(UP);
-                break;
-            default:
-                break;
-        }
-        usleep(500000);
+
+		display->clear();
+		display->drawMap(_map);
+		display->display();
+
+        usleep(200000);
     }
 }
