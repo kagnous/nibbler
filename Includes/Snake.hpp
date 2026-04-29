@@ -7,18 +7,6 @@
 
 #include "Types.hpp"
 
-enum Direction {
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT
-};
-
-struct Position {
-	int x;
-	int y;
-};
-
 class Snake
 {
 	private:
@@ -38,4 +26,5 @@ class Snake
 
 		// Getter
 		const std::vector<Position> &getBody() const;
+		Direction getDirection();
 };

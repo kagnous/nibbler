@@ -13,9 +13,19 @@ public:
     void drawMap(const std::vector<std::vector<Tile>>& map);
     void display();
     int getInput();
+	void drawSnake(const std::vector<Position> &body);
     ~SfmlDisplay();
 
 private:
     sf::RenderWindow _window;
     int           _tileSize;
+	sf::Texture      _texWall;
+    sf::Texture      _texSnake;
+    sf::Texture      _texFood;
+	sf::Texture		_texHead;
+	sf::Texture		_texTail;
+	sf::Texture		_texCorner;
+    sf::Sprite       _sprite;
+	sf::Sprite		_bodySprite;
+	sf::Sprite		_cornerSprite;
 };
