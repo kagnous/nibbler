@@ -4,13 +4,14 @@ void NcursesDisplay::init(int width, int height)
 {
     (void)width;
     (void)height;
-
+	setlocale(LC_ALL, "");
     initscr();              // init ncurses
     noecho();               // pas d'affichage clavier
     cbreak();              // input direct sans enter
     curs_set(0);           // cache curseur
     keypad(stdscr, TRUE);  // flèches
     nodelay(stdscr, TRUE); // input non bloquant
+	flushinp();			   // vide le buffer au demarrage
 }
 
 void NcursesDisplay::clear()
@@ -52,9 +53,13 @@ void NcursesDisplay::display()
 //récupération des inputs
 int NcursesDisplay::getInput()
 {
-    int ch = getch();
+    wint_t ch, last = 0;
 
-    switch (ch)
+    // Vide le buffer, garde le dernier
+    while (get_wch(&ch) != ERR)
+        last = ch;
+
+    switch (last)
     {
 		//Arrow
         case KEY_UP:    return INPUT_UP;
@@ -62,6 +67,12 @@ int NcursesDisplay::getInput()
         case KEY_LEFT:  return INPUT_LEFT;
         case KEY_RIGHT: return INPUT_RIGHT;
         case 27:        return INPUT_QUIT; // ESC
+		// case '1':		return INPUT_LIB1;
+		// case L'&':		return INPUT_LIB1; // &
+		case '2':		return INPUT_LIB2;
+		case L'é':		return INPUT_LIB2; // é
+		case '3':		return INPUT_LIB3;
+		case L'"':		return INPUT_LIB3; // "
         default:        return INPUT_NONE;
     }
 }

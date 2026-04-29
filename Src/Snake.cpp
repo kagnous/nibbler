@@ -59,7 +59,6 @@ State Snake::move(const std::vector<std::vector<Tile> > &map) // Avance la tête
     switch(map[head.y][head.x])
     {
         case WALL:
-            std::cout << "GAME OVER" << std::endl;
             return DEAD;
             break;
         case EMPTY:
@@ -68,16 +67,11 @@ State Snake::move(const std::vector<std::vector<Tile> > &map) // Avance la tête
 			return ALIVE;
             break;
         case SNAKE:
-            std::cout << "GAME OVER" << std::endl;
             return DEAD;
             break;
         case FOOD:
-            //std::cout << "Nôm nôm nôm..." << std::endl;
             _body.insert(_body.begin(), head);
 			return EAT;
-
-            // rappeler placeFood()
-
             break;
         default:
             std::cout << "PTDR chuis où ???" << std::endl;

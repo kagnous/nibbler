@@ -55,6 +55,9 @@ int SdlDisplay::getInput()
                 case SDLK_LEFT:   return INPUT_LEFT;
                 case SDLK_RIGHT:  return INPUT_RIGHT;
                 case SDLK_ESCAPE: return INPUT_QUIT;
+				case SDLK_1:	  return INPUT_LIB1;
+				// case SDLK_2:	  return INPUT_LIB2;
+				case SDLK_3:	  return INPUT_LIB3;
                 default: break;
             }
         }

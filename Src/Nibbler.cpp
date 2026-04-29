@@ -3,10 +3,6 @@
 
 #include "../Includes/Game.hpp"
 
-//Création de pointeur de fonction
-typedef IDisplay* (*CreateFunc)();
-typedef void (*DestroyFunc)(IDisplay*);
-
 static bool isNumber(const std::string &str)
 {
     for (size_t i = 0; i < str.size(); i++)
@@ -38,31 +34,8 @@ int main(int ac, char **av)
         return 1;
     }
 
-	//Chargement de la librairie
-    void *handle = dlopen("./libsdl_display.so", RTLD_LAZY);
-    if (!handle)
-    {
-        std::cerr << dlerror() << std::endl;
-        return 1;
-    }
-
-	//Récupération des fonctions de la librairie
-    CreateFunc create = (CreateFunc)dlsym(handle, "createDisplay");
-    DestroyFunc destroy = (DestroyFunc)dlsym(handle, "destroyDisplay");
-
-    if (!create || !destroy)
-    {
-        std::cerr << "dlsym error\n";
-        return 1;
-    }
-
-    IDisplay* display = create();
-
     Game game(width, height);
-    game.run(display);
-
-	destroy(display);
-	dlclose(handle);
+	game.run();
 
     return 0;
 }

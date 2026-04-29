@@ -6,7 +6,9 @@ Game::Game(int width, int height) : _snake(width / 2, height / 2) // Constructeu
 {
     _width = width;
     _height = height;
-	_running = true;
+	_running = false;
+	_handle  = nullptr;
+	_display = nullptr;
     _frame = 0;
     initMap();
 
@@ -29,6 +31,72 @@ Game &Game::operator=(const Game &src) // Opérateur d'égalité (canonique obli
 }
 
 Game::~Game() { } // Destructeur
+
+//Chargement de la librairie selon input
+void Game::loadLib(int lib)
+{
+	if (_display)
+	{
+		_destroy(_display);
+		_display = nullptr;
+	}
+	if (_handle)
+	{
+		dlclose(_handle);
+		_handle = nullptr;
+	}
+	switch(lib)
+	{
+		case INPUT_LIB1:
+			 _handle = dlopen("./libncurses_display.so", RTLD_LAZY);
+			 break;
+		case INPUT_LIB2:
+			_handle = dlopen("./libsdl_display.so", RTLD_LAZY);
+			break;
+		case INPUT_LIB3:
+			_handle = dlopen("./libsfml_display.so", RTLD_LAZY);
+			break;
+		default:
+			break;
+	}
+	//Chargement de la librairie
+    if (!_handle)
+    {
+        std::cerr << dlerror() << std::endl;
+		 _running = false;
+        return;
+    }
+
+	//Récupération des fonctions de la librairie
+    _create = (CreateFunc)dlsym(_handle, "createDisplay");
+    _destroy = (DestroyFunc)dlsym(_handle, "destroyDisplay");
+
+    if (!_create || !_destroy)
+    {
+        std::cerr << "dlsym error" << std::endl;
+		_running = false;
+        return;
+    }
+
+    _display = _create();
+	_display->init(_width, _height);
+	_running = true;
+}
+
+void Game::close()
+{
+	if (_display)
+	{
+		_destroy(_display);
+		_display = nullptr;
+	}
+	if (_handle)
+	{
+		dlclose(_handle);
+		_handle = nullptr;
+	}
+	std::cout << "Game over!" << std::endl;
+}
 
 void Game::initMap() // Remplit la map de EMPTY avec des WALL sur les extrémités
 {
@@ -124,31 +192,27 @@ void Game::update()
 		default:
 			break;
 	}
-    //std::cout << "Snake moved" << std::endl;
-    //std::cout << "Snake placed" << std::endl;
 }
 
-void Game::run(IDisplay *display) // fait tourner le jeu
+void Game::run()
 {
-    if (!display)
-        return;
-
-    display->init(_width, _height);
-
+	loadLib(INPUT_LIB1); //charge la librairie par default (ncurses)
     while (_running)
     {
-
 		
-		int input = display->getInput();
+		int input = _display->getInput();
 		
 		handleInput(input);
 		
         update();
 
-		display->clear();
-		display->drawMap(_map);
-		display->display();
+		_display->clear();
+		_display->drawMap(_map);
+		_display->display();
 
         usleep(200000);
+		if (input == INPUT_LIB1 || input == INPUT_LIB2 || input == INPUT_LIB3)
+			loadLib(input);
     }
+	close();
 }

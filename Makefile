@@ -2,10 +2,14 @@ NAME = Nibbler
 NAME_BNS = Nibbler_bonus
 LIB_NCURSES = libncurses_display.so
 LIB_SDL = libsdl_display.so
+LIB_SFML = libsfml_display.so
 
-CPPFLAGS = -Wall -Wextra -Werror -g
+CPPFLAGS = -Wall -Wextra -Werror -ldl -g
+LDLIBS = -ldl
 CXX = c++
 RM = rm -f
+SFML_CFLAGS = $(shell pkg-config --cflags sfml-graphics sfml-window sfml-system)
+SFML_LIBS   = $(shell pkg-config --libs sfml-graphics sfml-window sfml-system)
 
 SRC_DIR = Src
 BNS_DIR = Bonus
@@ -22,13 +26,10 @@ FILES_BNS = nibbler_bns.cpp
 SRC = $(addprefix $(SRC_DIR)/, $(FILES))
 SRC_BNS = $(addprefix $(BNS_DIR)/, $(FILES_BNS))
 
-LIB_SRC = $(SRC_DIR)/NcursesDisplay.cpp
-LIB_OBJ = $(OBJDIR)/NcursesDisplay.o
-
 OBJ = $(addprefix $(OBJDIR)/, $(FILES:.cpp=.o))
 OBJ_BNS = $(addprefix $(OBJ_BNSDIR)/, $(FILES_BNS:.cpp=.o))
 
-all: intro $(LIB_NCURSES) $(LIB_SDL) $(NAME)
+all: intro $(LIB_NCURSES) $(LIB_SDL) $(LIB_SFML) $(NAME)
 
 bonus: intro $(NAME_BNS)
 
@@ -37,13 +38,16 @@ intro:
 
 $(NAME): $(OBJ)
 	@echo "\n-----End of compilation-----"
-	@$(CXX) $(CPPFLAGS) $(OBJ) -o $(NAME)
+	@$(CXX) $(CPPFLAGS) $(OBJ) -o $(NAME) $(LDLIBS)
 
-$(LIB_NCURSES): $(LIB_OBJ)
-	$(CXX) $(CPPFLAGS) -fPIC -shared $(LIB_OBJ) -o $(LIB_NCURSES) -lncurses
+$(LIB_NCURSES): $(OBJDIR)/NcursesDisplay.o
+	$(CXX) $(CPPFLAGS) -fPIC -shared $(OBJDIR)/NcursesDisplay.o -o $(LIB_NCURSES) -lncursesw
 
 $(LIB_SDL): $(OBJDIR)/SdlDisplay.o
 	$(CXX) -shared -fPIC $< -o $@ -lSDL2
+
+$(LIB_SFML): $(OBJDIR)/SfmlDisplay.o
+	$(CXX) -shared -fPIC $< -o $@ $(SFML_LIBS)
 
 $(NAME_BNS): $(OBJ_BNS)
 	@echo "\n-----End of compilation-----"
@@ -62,6 +66,10 @@ $(OBJDIR)/SdlDisplay.o: $(SRC_DIR)/SdlDisplay.cpp
 	@mkdir -p $(OBJDIR)
 	$(CXX) $(CPPFLAGS) -fPIC -c $< -o $@
 
+$(OBJDIR)/SfmlDisplay.o: $(SRC_DIR)/SfmlDisplay.cpp
+	@mkdir -p $(OBJDIR)
+	$(CXX) $(CPPFLAGS) -fPIC $(SFML_CFLAGS) -c $< -o $@
+
 $(OBJ_BNSDIR)/%.o: $(BNS_DIR)/%.cpp
 	@mkdir -p $(OBJ_BNSDIR)
 	@echo "Building $@"
@@ -78,6 +86,7 @@ fclean: clean
 	$(RM) $(NAME_BNS)
 	$(RM) $(LIB_NCURSES)
 	$(RM) $(LIB_SDL)
+	$(RM) $(LIB_SFML)
 
 re: fclean all
 

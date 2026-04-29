@@ -26,14 +26,19 @@ class Game
         Game(const Game &copy);
         Game &operator=(const Game &src);
         ~Game();
-
-        void run(IDisplay *display);
-
-    private:
+		void run();
+		
+	private:
+		typedef IDisplay* (*CreateFunc)();
+		typedef void (*DestroyFunc)(IDisplay*);
         int _width;
         int _height;
         int _frame;
 		bool _running;
+		void *_handle;
+		IDisplay *_display;
+		CreateFunc _create;
+		DestroyFunc _destroy;
         std::vector<std::vector<Tile> > _map;
         Snake _snake;
 
@@ -42,5 +47,6 @@ class Game
         void placeSnake();
         void update();
 		void handleInput(int input);
-        // void render();  // A REMPLACER PAR LIBRAIRIE DYNAMIQUES
+		void loadLib(int input);
+		void close();
 };

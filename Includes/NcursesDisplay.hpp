@@ -2,6 +2,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <ncurses.h>
+#include <locale.h>
 
 class NcursesDisplay : public IDisplay {
 public:
