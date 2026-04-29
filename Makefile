@@ -21,7 +21,9 @@ FILES = Nibbler.cpp \
 		Game.cpp \
 		Snake.cpp 
 
-FILES_BNS = nibbler_bns.cpp
+FILES_BNS = Nibbler_bns.cpp \
+			Game_bns.cpp \
+			Snake_bns.cpp
 
 SRC = $(addprefix $(SRC_DIR)/, $(FILES))
 SRC_BNS = $(addprefix $(BNS_DIR)/, $(FILES_BNS))
