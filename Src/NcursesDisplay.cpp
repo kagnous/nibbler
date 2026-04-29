@@ -12,11 +12,21 @@ void NcursesDisplay::init(int width, int height)
     keypad(stdscr, TRUE);  // flèches
     nodelay(stdscr, TRUE); // input non bloquant
 	flushinp();			   // vide le buffer au demarrage
+	start_color();
+	init_pair(1, COLOR_WHITE,   COLOR_BLACK);  // WALL
+	init_pair(2, COLOR_GREEN,   COLOR_BLACK);  // SNAKE
+	init_pair(3, COLOR_CYAN,    COLOR_BLACK);  // HEAD
+	init_pair(4, COLOR_RED,     COLOR_BLACK);  // FOOD
 }
 
 void NcursesDisplay::clear()
 {
     ::clear();
+}
+
+void NcursesDisplay::drawSnake(const std::vector<Position> &body)
+{
+	(void)body;
 }
 
 //Affichage de la map
@@ -29,17 +39,35 @@ void NcursesDisplay::drawMap(const std::vector<std::vector<Tile>>& map)
             switch (map[y][x])
 			{
                 case WALL:
+				{
+					attron(COLOR_PAIR(1));
                     mvaddch(y, x * 2, '#');
+					attroff(COLOR_PAIR(1));
                     break;
+				}
                 case SNAKE:
-                    mvaddch(y, x * 2, 'O');
-                    break;
-                case FOOD:
-                    mvaddch(y, x * 2, '*');
-                    break;
-                default:
-                    mvaddch(y, x * 2, ' ');
-                    break;
+				{
+					attron(COLOR_PAIR(2));
+					mvaddch(y, x * 2, 'O');
+					attroff(COLOR_PAIR(2));
+					break;
+				}
+				case HEAD:
+				{
+					attron(COLOR_PAIR(3) | A_BOLD);
+					mvaddch(y, x * 2, '@');
+					attroff(COLOR_PAIR(3) | A_BOLD);
+					break;
+				}
+				case FOOD:
+				{
+					attron(COLOR_PAIR(4) | A_BLINK);
+					mvaddch(y, x * 2, '*');
+					attroff(COLOR_PAIR(4) | A_BLINK);
+					break;
+				}
+				default:
+					break;
             }
         }
     }

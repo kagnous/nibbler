@@ -17,6 +17,11 @@ void SdlDisplay::clear()
     SDL_RenderClear(_renderer);
 }
 
+void SdlDisplay::drawSnake(const std::vector<Position> &body)
+{
+	(void)body;
+}
+
 void SdlDisplay::drawMap(const std::vector<std::vector<Tile>>& map)
 {
     for (int y = 0; y < (int)map.size(); y++) {
@@ -24,13 +29,23 @@ void SdlDisplay::drawMap(const std::vector<std::vector<Tile>>& map)
             SDL_Rect rect = { x * _tileSize, y * _tileSize, _tileSize, _tileSize };
             switch (map[y][x]) {
                 case WALL:
-                    SDL_SetRenderDrawColor(_renderer, 100, 100, 100, 255); break;
+                    SDL_SetRenderDrawColor(_renderer, 100, 100, 100, 255);
+					break;
                 case SNAKE:
-                    SDL_SetRenderDrawColor(_renderer, 0, 200, 0, 255);     break;
+                    SDL_SetRenderDrawColor(_renderer, 0, 200, 0, 255);
+					break;
+				case HEAD:
+					SDL_SetRenderDrawColor(_renderer, 0, 255, 0, 255);
+					break;
                 case FOOD:
-                    SDL_SetRenderDrawColor(_renderer, 200, 0, 0, 255);     break;
+				{
+                    int pulse = 180 + (int)(40 * sin(SDL_GetTicks() / 200.0));
+					SDL_SetRenderDrawColor(_renderer, pulse, 0, 0, 255);
+					break;
+				}
                 default:
-                    SDL_SetRenderDrawColor(_renderer, 20, 20, 20, 255);    break;
+                    SDL_SetRenderDrawColor(_renderer, 20, 20, 20, 255);
+					break;
             }
             SDL_RenderFillRect(_renderer, &rect);
         }

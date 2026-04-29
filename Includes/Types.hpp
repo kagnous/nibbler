@@ -4,6 +4,7 @@ enum Tile {
     EMPTY,
     WALL,
     SNAKE,
+	HEAD,
     FOOD
 };
 
@@ -23,4 +24,16 @@ enum State {
 	DEAD,
 	EAT,
 	ALIVE
+};
+
+enum Direction {
+	UP,
+	DOWN,
+	LEFT,
+	RIGHT
+};
+
+struct Position {
+	int x;
+	int y;
 };

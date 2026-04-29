@@ -12,6 +12,7 @@ public:
     void drawMap(const std::vector<std::vector<Tile>>& map);
     void display();
     int getInput();
+	void drawSnake(const std::vector<Position> &body);
     ~SdlDisplay();
 
 private:

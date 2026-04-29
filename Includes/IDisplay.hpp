@@ -10,6 +10,7 @@ class IDisplay
 		virtual void clear() = 0;
 		virtual void drawMap(const std::vector<std::vector<Tile>>& map) = 0;
 		virtual void display() = 0;
+		virtual void drawSnake(const std::vector<Position> &body) = 0;
 
 		virtual ~IDisplay() {}
 
