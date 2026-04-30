@@ -228,7 +228,12 @@ void Game::placeSnake() // Met à jour SNAKE dans la map
         int y = body[i].y;
 
         if (y >= 0 && y < _height && x >= 0 && x < _width)
-            _map[y][x] = SNAKE;
+		{
+			if (i == 0)
+				_map[y][x] = HEAD;
+			else
+            	_map[y][x] = SNAKE;
+		}
     }
 }
 //Gestions du comportement des inputs
@@ -284,9 +289,10 @@ void Game::run()
 		handleInput(input);
 		
         update();
-
+	
 		_display->clear();
 		_display->drawMap(_map);
+		_display->drawSnake(_snake.getBody());
 		_display->display();
 
         usleep(500000);

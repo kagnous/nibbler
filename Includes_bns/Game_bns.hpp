@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IDisplay.hpp"
+#include "../Includes/IDisplay.hpp"
 #include <iostream>
 #include <cstdlib>
 #include <vector>
@@ -10,7 +10,7 @@
 #include <fstream>
 #include <stdexcept>
 
-#include "Types_bns.hpp"
+#include "../Includes/Types.hpp"
 #include "Snake_bns.hpp"
 
 class Game

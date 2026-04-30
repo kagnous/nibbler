@@ -5,19 +5,7 @@
 #include <vector>
 #include <unistd.h>
 
-#include "Types_bns.hpp"
-
-enum Direction {
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT
-};
-
-struct Position {
-	int x;
-	int y;
-};
+#include "../Includes/Types.hpp"
 
 class Snake
 {

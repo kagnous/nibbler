@@ -8,14 +8,6 @@
 #include <dlfcn.h>
 
 #include "Types.hpp"
-
-/*enum Tile {
-    EMPTY,
-    WALL,
-    SNAKE,
-    FOOD
-};*/
-
 #include "Snake.hpp"
 
 class Game

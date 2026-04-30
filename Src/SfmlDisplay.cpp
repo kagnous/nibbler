@@ -1,6 +1,6 @@
 #include "../Includes/SfmlDisplay.hpp"
 
-SfmlDisplay::SfmlDisplay() : _tileSize(32) 
+SfmlDisplay::SfmlDisplay() : _tileSize(32), _animFrame(0)
 {}
 
 void SfmlDisplay::init(int width, int height)
@@ -11,8 +11,10 @@ void SfmlDisplay::init(int width, int height)
 	// _texWall.loadFromFile("Assets/wall.png");
     _texSnake.loadFromFile("Assets/body.png");
 	_texCorner.loadFromFile("Assets/corner.png");
-    // _texFood.loadFromFile("Assets/food.png");
-	_texHead.loadFromFile("Assets/headDown.png");
+    _texFood.loadFromFile("Assets/apple.png");
+	_texHead.loadFromFile("Assets/head.png");
+	_texHead2.loadFromFile("Assets/head2.png");
+	_texHead3.loadFromFile("Assets/head3.png");
 	_texTail.loadFromFile("Assets/tail.png");
 	
 	// Calculer le scale pour que l'image remplisse exactement un tile
@@ -22,8 +24,11 @@ void SfmlDisplay::init(int width, int height)
 	_bodySprite.setOrigin(snakeSize.x / 2.0f, snakeSize.y / 2.0f);
 	_cornerSprite.setScale((float)_tileSize / cornerSize.x, (float)_tileSize / cornerSize.y);
 	_cornerSprite.setOrigin(cornerSize.x / 2.0f, cornerSize.y / 2.0f);
+	_foodSprite.setScale((float)_tileSize / cornerSize.x, (float)_tileSize / cornerSize.y);
+	_foodSprite.setOrigin(cornerSize.x / 2.0f, cornerSize.y / 2.0f);
 	_cornerSprite.setTexture(_texCorner);
 	_bodySprite.setTexture(_texSnake);
+	_foodSprite.setTexture(_texFood);
 }
 
 void SfmlDisplay::clear()
@@ -43,14 +48,20 @@ void SfmlDisplay::drawSnake(const std::vector<Position> &body)
     if(hdx ==  1)
 		_sprite.setRotation(270);// va à droite
     else if(hdx == -1)
-		_sprite.setRotation(90); 
-		  // va à gauche
+		_sprite.setRotation(90); // va à gauche
     else if(hdy ==  1)
 		_sprite.setRotation(0);  // va en bas
     else
 		_sprite.setRotation(180);    // va en haut
 
-    _sprite.setTexture(_texHead);
+    // Avancer d'une frame toutes les 150ms
+	if (_animClock.getElapsedTime().asMilliseconds() > 150) {
+		_animFrame = (_animFrame + 1) % 3;
+		_animClock.restart();
+	}
+	const sf::Texture* headFrames[3] = { &_texHead, &_texHead2, &_texHead3 };
+	_sprite.setTexture(*headFrames[_animFrame]);
+
 	sf::Vector2u s = _texHead.getSize();
 	_sprite.setScale((float)_tileSize / s.x, (float)_tileSize / s.y);
 	_sprite.setOrigin(s.x / 2.0f, s.y / 2.0f);
@@ -126,7 +137,7 @@ void SfmlDisplay::drawSnake(const std::vector<Position> &body)
 
 void SfmlDisplay::drawMap(const std::vector<std::vector<Tile>>& map)
 {
-    sf::RectangleShape rect(sf::Vector2f(_tileSize - 1, _tileSize - 1));
+    sf::RectangleShape rect(sf::Vector2f(_tileSize, _tileSize));
 
     for (int y = 0; y < (int)map.size(); y++) {
         for (int x = 0; x < (int)map[y].size(); x++) {
@@ -135,8 +146,12 @@ void SfmlDisplay::drawMap(const std::vector<std::vector<Tile>>& map)
 					rect.setFillColor(sf::Color(100, 100, 100));
 					break;
                 case FOOD:
-					rect.setFillColor(sf::Color(0, 0, 255));
-					break;
+					rect.setFillColor(sf::Color(20, 20, 20));
+					rect.setPosition(x * _tileSize, y * _tileSize);
+            		_window.draw(rect);
+					_foodSprite.setPosition(x * _tileSize + _tileSize / 2.0f, y * _tileSize + _tileSize / 2.0f);
+    				_window.draw(_foodSprite);
+					continue;
                 default:
 					rect.setFillColor(sf::Color(20, 20, 20));
 					break;
@@ -146,45 +161,6 @@ void SfmlDisplay::drawMap(const std::vector<std::vector<Tile>>& map)
         }
     }
 }
-
-// void SfmlDisplay::drawMap(const std::vector<std::vector<Tile>>& map)
-// {
-//     sf::RectangleShape rect(sf::Vector2f(_tileSize - 1, _tileSize - 1));
-
-//     for (int y = 0; y < (int)map.size(); y++) {
-//         for (int x = 0; x < (int)map[y].size(); x++) {
-//             switch (map[y][x]) {
-//                 case WALL:
-// 					rect.setFillColor(sf::Color(100, 100, 100));
-// 					break;
-//                 case SNAKE:
-// 					rect.setFillColor(sf::Color(20, 20, 20));
-// 					rect.setPosition(x * _tileSize, y * _tileSize);
-//             		_window.draw(rect);
-// 					_sprite.setTexture(_texSnake);
-// 					_sprite.setPosition(x * _tileSize + _tileSize / 2.0f, y * _tileSize + _tileSize / 2.0f);
-//     				_window.draw(_sprite);
-// 					continue;
-// 				case HEAD:
-// 					rect.setFillColor(sf::Color(20, 20, 20));
-// 					rect.setPosition(x * _tileSize, y * _tileSize);
-//             		_window.draw(rect);
-// 					_sprite.setTexture(_texHead);
-// 					_sprite.setPosition(x * _tileSize + _tileSize / 2.0f, y * _tileSize + _tileSize / 2.0f);
-//     				_window.draw(_sprite);
-// 					continue;
-//                 case FOOD:
-// 					rect.setFillColor(sf::Color(0, 0, 255));
-// 					break;
-//                 default:
-// 					rect.setFillColor(sf::Color(20, 20, 20));
-// 					break;
-//             }
-//             rect.setPosition(x * _tileSize, y * _tileSize);
-//             _window.draw(rect);
-//         }
-//     }
-// }
 
 void SfmlDisplay::display()
 {

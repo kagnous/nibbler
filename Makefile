@@ -33,7 +33,7 @@ OBJ_BNS = $(addprefix $(OBJ_BNSDIR)/, $(FILES_BNS:.cpp=.o))
 
 all: intro $(LIB_NCURSES) $(LIB_SDL) $(LIB_SFML) $(NAME)
 
-bonus: intro $(NAME_BNS)
+bonus: intro $(LIB_NCURSES) $(LIB_SDL) $(LIB_SFML) $(NAME_BNS)
 
 intro:
 		@echo "Start building program ...\n"
