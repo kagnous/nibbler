@@ -2,35 +2,31 @@
 
 set -e
 
-echo "Installing Nibbler dependencies..."
+cmake -B build_check -DCMAKE_INSTALL_PREFIX="$PWD/build_check/install"
 
-# Détecte le gestionnaire de paquets
-if command -v apt-get &> /dev/null; then
-    sudo apt-get update || true
-    sudo apt-get install -y \
-        libsfml-dev \
-        libsdl2-dev \
-        libncursesw5-dev \
-        pkg-config \
-        build-essential
-elif command -v dnf &> /dev/null; then
-    sudo dnf install -y \
-        SFML-devel \
-        SDL2-devel \
-        ncurses-devel \
-        pkg-config \
-        gcc-c++ make
-elif command -v pacman &> /dev/null; then
-    sudo pacman -Sy --noconfirm \
-        sfml \
-        sdl2 \
-        ncurses \
-        pkgconf \
-        base-devel
-else
-    echo "ERROR: No supported package manager found (apt, dnf, pacman)"
-    exit 1
+if [ -d "build_check/ncurses-prefix" ]; then
+    echo "Building downloaded ncurses..."
+    cmake --build build_check --target ncurses
+    export PKG_CONFIG_PATH="$PWD/build_check/ncurses-prefix/lib/pkgconfig:$PKG_CONFIG_PATH"
+    export LD_LIBRARY_PATH="$PWD/build_check/ncurses-prefix/lib:$LD_LIBRARY_PATH"
+    export CPLUS_INCLUDE_PATH="$PWD/build_check/ncurses-prefix/include/ncurses:$CPLUS_INCLUDE_PATH"
 fi
 
-echo "All dependencies installed."
-echo "Run 'make' to build Nibbler, or 'make bonus' for the bonus version."
+if [ -d "build_check/_deps/sfml-src" ]; then
+    echo "Building downloaded SFML..."
+    cmake --build build_check
+    cmake --install build_check
+    export PKG_CONFIG_PATH="$PWD/build_check/install/pkgconfig:$PKG_CONFIG_PATH"
+    export LD_LIBRARY_PATH="$PWD/build_check/install/lib:$LD_LIBRARY_PATH"
+    export CPLUS_INCLUDE_PATH="$PWD/build_check/install/include:$CPLUS_INCLUDE_PATH"
+fi
+
+if [ -d "build_check/_deps/sdl2-src" ]; then
+    echo "Building downloaded SDL2..."
+    cmake --build build_check --target SDL2
+    cmake --install build_check --prefix build_check/install
+    export PKG_CONFIG_PATH="$PWD/build_check/install/lib/pkgconfig:$PKG_CONFIG_PATH"
+    export LD_LIBRARY_PATH="$PWD/build_check/install/lib:$LD_LIBRARY_PATH"
+fi
+
+make bonus

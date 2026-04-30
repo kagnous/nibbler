@@ -4,7 +4,7 @@ LIB_NCURSES = libncurses_display.so
 LIB_SDL = libsdl_display.so
 LIB_SFML = libsfml_display.so
 
-CPPFLAGS = -Wall -Wextra -Werror -ldl -g
+CPPFLAGS = -Wall -Wextra -Werror -g
 LDLIBS = -ldl
 CXX = c++
 RM = rm -f
@@ -49,11 +49,11 @@ $(LIB_SDL): $(OBJDIR)/SdlDisplay.o
 	$(CXX) -shared -fPIC $< -o $@ -lSDL2
 
 $(LIB_SFML): $(OBJDIR)/SfmlDisplay.o
-	$(CXX) -shared -fPIC $< -o $@ $(SFML_LIBS)
+	$(CXX) -shared -fPIC $< -o $@ $(SFML_LIBS) -Wl,-rpath,$(PWD)/build_check/install/lib
 
 $(NAME_BNS): $(OBJ_BNS)
 	@echo "\n-----End of compilation-----"
-	@$(CXX) $(CPPFLAGS) $(OBJ_BNS) -o $(NAME_BNS)
+	@$(CXX) $(CPPFLAGS) $(OBJ_BNS) -o $(NAME_BNS) $(LDLIBS)
 
 $(OBJDIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(OBJDIR)
