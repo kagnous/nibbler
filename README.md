@@ -59,7 +59,7 @@ or
 ```
 Map format: `#` = wall, ` ` = empty, `S` = snake spawn, `*` = food spawn.
 
-Included maps: `Base.txt`, `EasyPacMan.txt`, `PacMAn.txt`
+Included maps: `Base.txt`, `EasyPacMan.txt`, `PacMan.txt`
 
 ---
 
@@ -68,6 +68,7 @@ Included maps: `Base.txt`, `EasyPacMan.txt`, `PacMAn.txt`
 | Key              | Action                        |
 |------------------|-------------------------------|
 | Arrow keys       | Move the snake                |
+| `1` / `&`        | Switch to Ncurses display     |
 | `2` / `é`        | Switch to SDL2 display        |
 | `3` / `"`        | Switch to SFML display        |
 | `ESC`            | Quit                          |
