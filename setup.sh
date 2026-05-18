@@ -29,4 +29,23 @@ if [ -d "build_check/_deps/sdl2-src" ]; then
     export LD_LIBRARY_PATH="$PWD/build_check/install/lib:$LD_LIBRARY_PATH"
 fi
 
-make bonus
+# Determine build target
+TARGET="$1"
+if [ -z "$TARGET" ]; then
+    echo ""
+    echo "What do you want to build?"
+    echo "  [1] base"
+    echo "  [2] bonus"
+    read -rp "Choice (1/2): " choice
+    case "$choice" in
+        1) TARGET="base" ;;
+        2) TARGET="bonus" ;;
+        *) echo "Invalid choice, defaulting to base"; TARGET="base" ;;
+    esac
+fi
+
+case "$TARGET" in
+    base)  make ;;
+    bonus) make bonus ;;
+    *)     echo "Unknown target '$TARGET'. Use 'base' or 'bonus'."; exit 1 ;;
+esac
