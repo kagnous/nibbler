@@ -90,6 +90,4 @@ fclean: clean
 	$(RM) $(LIB_SDL)
 	$(RM) $(LIB_SFML)
 
-re: fclean all
-
 .PHONY: all bonus intro clean fclean re
